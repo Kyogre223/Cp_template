@@ -1,4 +1,10 @@
-    auto get = [&](long long x) -> int {
+    auto vals = A;
+    sort(vals.begin(), vals.end());
+    vals.erase(unique(vals.begin(), vals.end()), vals.end());
+
+
+
+auto get = [&](long long x) -> int {
         auto it = upper_bound(vals.begin(), vals.end(), x);
         if (it == vals.begin()) return -1;
         --it;
