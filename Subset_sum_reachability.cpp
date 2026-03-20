@@ -2,6 +2,53 @@
 #include <map>
 #include <bitset>
 
+// ------ DYNAMIC BITSET
+#include <tr2/dynamic_bitset>
+using std::tr2::dynamic_bitset;
+using namespace __gnu_pbds; 
+
+using namespace std::tr2;
+
+std::vector<ll> reachableSumsBitset(const std::vector<ll>& arr, ll target) {
+    dynamic_bitset<> dp(static_cast<size_t>(target + 1));
+    dp[0] = 1;
+
+    std::map<ll, ll> counts;
+    for (ll x : arr) {
+        if (x <= target) {
+            counts[x]++;
+        }
+    }
+
+    std::vector<ll> bundles;
+    for (const auto& [weight, count] : counts) {
+        ll rem = count;
+        for (ll b = 1; b <= rem; b <<= 1) {
+            bundles.push_back(b * weight);
+            rem -= b;
+        }
+        if (rem > 0) {
+            bundles.push_back(rem * weight);
+        }
+    }
+
+    for (ll bw : bundles) {
+        dp |= (dp << static_cast<size_t>(bw));
+    }
+
+    std::vector<ll> reachable;
+    for (ll s = 0; s <= target; ++s) {
+        if (dp[static_cast<size_t>(s)]) {
+            reachable.push_back(s);
+        }
+    }
+
+    return reachable;
+}
+
+
+
+// ----- STATIC BITSET ------ 
 
 constexpr std::size_t MAX_K = 1'000'001;
 
