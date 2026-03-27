@@ -1,0 +1,28 @@
+int n, target;
+vector<int> a(n);
+
+// Generate all subsets of first half
+vector<int> left;
+int half = n / 2;
+for (int mask = 0; mask < (1 << half); mask++) {
+    int sum = 0;
+    for (int i = 0; i < half; i++) {
+        if (mask & (1 << i)) sum += a[i];
+    }
+    if (sum <= target) left.push_back(sum);
+}
+sort(left.begin(), left.end());
+
+// For each subset of second half, binary search complement
+bool found = false;
+for (int mask = 0; mask < (1 << (n - half)); mask++) {
+    int sum = 0;
+    for (int i = 0; i < n - half; i++) {
+        if (mask & (1 << i)) sum += a[half + i];
+    }
+    int need = target - sum;
+    if (need >= 0 && binary_search(left.begin(), left.end(), need)) {
+        found = true;
+        break;
+    }
+}
