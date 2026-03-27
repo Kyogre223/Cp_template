@@ -2,6 +2,34 @@
 #include <map>
 #include <bitset>
 
+
+
+// BINARY SPLITTING WHERE EACH WEIGHT is only 1
+
+{    // Count frequencies of each weight
+    std::map<ll, ll> counts;
+    for (int x : islands) {
+        counts[x]++;
+    }
+
+    // Binary splitting
+    std::vector<pair<ll, ll>> bundles;
+    for (const auto& [weight, count] : counts) {
+        int rem = count;
+        for (int b = 1; b <= rem; b <<= 1) {
+            bundles.push_back({b * weight, b});
+            rem -= b;
+        }
+        if (rem > 0) {
+            bundles.push_back({rem * weight, rem});
+        }
+    }
+
+
+}
+
+
+// --------------------------
 // ------ DYNAMIC BITSET
 #include <tr2/dynamic_bitset>
 using std::tr2::dynamic_bitset;
