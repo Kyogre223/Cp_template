@@ -1,30 +1,39 @@
-// this finds the XOR basis of a set of numbers, and as well as the maximum, and can be achieved or not.
-
 struct XorBasis {
-    long long basis[60];  // For 60-bit numbers
-    int size = 0;
+    long long basis[60];
+    int rank = 0;
     
     XorBasis() {
         memset(basis, 0, sizeof(basis));
     }
     
-    void add(long long x) {
+    // Add a vector to the basis
+    // Returns true if it was independent (added to basis)
+    // Returns false if it was dependent (already representable)
+    bool add(long long x) {
         for (int i = 59; i >= 0; i--) {
-            if (!((x >> i) & 1)) continue;  // bit i not set
+            if (!((x >> i) & 1)) continue;
             
             if (basis[i] == 0) {
-                // No basis element with this leading bit
                 basis[i] = x;
-                size++;
-                return;
+                rank++;
+                return true;  // Independent
             }
-            
-            // Reduce x using basis[i]
             x ^= basis[i];
         }
-        // x became 0 — was already representable
+        return false;  // Dependent (x became 0)
     }
     
+    // Check if x can be represented as XOR of basis vectors
+    bool canRepresent(long long x) {
+        for (int i = 59; i >= 0; i--) {
+            if (!((x >> i) & 1)) continue;
+            if (basis[i] == 0) return false;
+            x ^= basis[i];
+        }
+        return true;  // x reduced to 0
+    }
+    
+    // Find maximum XOR achievable, optionally starting with x
     long long maxXor(long long x = 0) {
         for (int i = 59; i >= 0; i--) {
             if (basis[i] == 0) continue;
@@ -33,17 +42,21 @@ struct XorBasis {
         return x;
     }
     
-    bool canRepresent(long long x) {
-        for (int i = 59; i >= 0; i--) {
-            if (!((x >> i) & 1)) continue;
-            
-            if (basis[i] == 0) return false;
-            x ^= basis[i];
+    // Find minimum XOR achievable (among non-zero values)
+    long long minXor() {
+        for (int i = 0; i < 60; i++) {
+            if (basis[i] != 0) return basis[i];
         }
-        return x == 0;
+        return 0;  // Empty basis
     }
     
+    // Count distinct XOR values achievable
     long long countDistinct() {
-        return 1LL << size;  // 2^size distinct values
+        return 1LL << rank;
+    }
+    
+    // Get the rank
+    int getRank() {
+        return rank;
     }
 };
